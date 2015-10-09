@@ -1,36 +1,3 @@
-// cookie 获取样式
-function getCookie(c_name) {
-  if (document.cookie.length > 0) {
-    c_start = document.cookie.indexOf(c_name + "=");
-    if (c_start != -1) { 
-      c_start = c_start + c_name.length+1;
-      c_end = document.cookie.indexOf(";", c_start);
-      if (c_end == -1) {
-        c_end = document.cookie.length;
-      }
-      return unescape(document.cookie.substring(c_start, c_end));
-    } 
-  }
-  return "";
-}
-function setCookie(c_name, value, expiredays) {
-  var exdate = new Date();
-  exdate.setDate(exdate.getDate() + expiredays);
-  document.cookie = c_name + "=" + escape(value) + ((expiredays==null) ? "" : ";expires=" + exdate.toGMTString());
-}
-function checkCookie(){
-  userStyle=getCookie('userStyle');
-  if (userStyle != null && userStyle != "") {
-    changeStyle(userStyle); 
-  } else {
-    userStyle = "dialog-style6";
-    if (userStyle!=null && userStyle!="")
-    {
-      setCookie('userStyle',userStyle,365);
-    }
-  }
-}
-
 // 请将 AppId 改为你自己的 AppId，否则无法本地测试
 var appId = '2NoV7CLMeVkPpcPwjqnjilyV';
 
@@ -38,7 +5,7 @@ var appId = '2NoV7CLMeVkPpcPwjqnjilyV';
 var roomId = '560a7da460b2c218f8927033';
 
 // 每个客户端自定义的 id
-var clientId = 'aaaaaa';
+var clientId = 'default';
 
 // 用来存储 realtimeObject
 var rt;
@@ -63,19 +30,15 @@ var sendBtn = document.getElementById('send-btn');
 // 最早一条消息的时间戳
 var msgTime;
 
-// bindEvent(openBtn, 'click', main);
+// start
 function window_onload(){
   checkCookie();
   main();
   getHeight();
 }
 
+// 回车键亦可触发
 bindEvent(sendBtn, 'click', sendMsg);
-styleBtn.onclick = function(){
-  changeStyle('dialog-style1');
-  setCookie('userStyle','dialog-style1',365);
-};
-
 bindEvent(document.body, 'keydown', function(e) {
   if (e.keyCode === 13) {
     if (firstFlag) {
@@ -86,50 +49,20 @@ bindEvent(document.body, 'keydown', function(e) {
   }
 });
 
-// 更换class
-function hasClass(obj, cls) {  
-  return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));  
-}  
-function addClass(obj, cls) {  
-  if (!this.hasClass(obj, cls)) obj.className += " " + cls;  
-}  
-function removeClass(obj, cls) {  
-  if (hasClass(obj, cls)) {  
-      var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');  
-      obj.className = obj.className.replace(reg, ' ');  
-  }  
-}
-function changeStyle(cls){
-  var before = inputSend.className;
-  removeClass(styleBtn, before);
-  addClass(styleBtn, cls);
-  removeClass(inputSend, before);
-  addClass(inputSend, cls); 
-  removeClass(emojiBtn, before);
-  addClass(emojiBtn, cls); 
-  removeClass(sendBtn, before);
-  addClass(sendBtn, cls);
-}
-
-// 获取高度
-function getHeight(){
-  var height_screen = screen.height;
-  var height = height_screen - 90;
-  document.getElementById("dialog-list").style.height = height+"px";
-}
+styleBtn.onclick = function(){
+  changeStyle('dialog-style1');
+  setCookie('userStyle','dialog-style1',365);
+};
 
 function main() {
   // showLog('正在链接服务器，请等待。。。');
-  var valint = Math.random()*99999999;
-  var val = valint.toString();
-  if (val) {
-    clientId = val;
-  }
+  clientId = uuid();
+
   if (!firstFlag) {
     rt.close();
   }
 
-  // 创建实时通信实例
+  // 创建实时通信实s例
   rt = AV.realtime({
     appId: appId,
     clientId: clientId,
@@ -244,11 +177,13 @@ function sendMsg() {
     alert('请先连接服务器！');
     return;
   }
-  var val = inputSend.value;
+  var cls = inputSend.className;
+  var text = inputSend.value;
+  var val = text + cls;
 
   // 不让发送空字符
   if (!String(val).replace(/^\s+/, '').replace(/\s+$/, '')) {
-    alert('请输入点文字！');
+    alert('空的发不出去＝。＝');
   }
 
   // 向这个房间发送消息，这段代码是兼容多终端格式的，包括 iOS、Android、Window Phone
@@ -307,7 +242,7 @@ function showMsg(data, isBefore) {
 
 // 拉取历史
 bindEvent(printWall, 'scroll', function(e) {
-  if (printWall.scrollTop < 5) {
+  if (printWall.scrollTop < 10) {
     getLog();
   }
 });
@@ -350,21 +285,22 @@ function showLog(msg, data, isBefore) {
   }
   var p = document.createElement('p');
   p.innerHTML = msg;
+
   if (isBefore) {
     printWall.insertBefore(p, printWall.childNodes[0]);
   } else {
     printWall.appendChild(p);
   }
 }
-
+// 转译bug
 function encodeHTML(source) {
   return String(source)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-  // .replace(/\\/g,'&#92;')
-  // .replace(/"/g,'&quot;')
-  // .replace(/'/g,'&#39;');
+    .replace(/>/g, '&gt;')
+    .replace(/\\/g, '&#92;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function formatTime(time) {
@@ -383,4 +319,83 @@ function bindEvent(dom, eventName, fun) {
   } else {
     dom.attachEvent('on' + eventName, fun);
   }
+}
+
+// cookie 获取样式
+function getCookie(c_name) {
+  if (document.cookie.length > 0) {
+    c_start = document.cookie.indexOf(c_name + "=");
+    if (c_start != -1) { 
+      c_start = c_start + c_name.length+1;
+      c_end = document.cookie.indexOf(";", c_start);
+      if (c_end == -1) {
+        c_end = document.cookie.length;
+      }
+      return unescape(document.cookie.substring(c_start, c_end));
+    } 
+  }
+  return "";
+}
+function setCookie(c_name, value, expiredays) {
+  var exdate = new Date();
+  exdate.setDate(exdate.getDate() + expiredays);
+  document.cookie = c_name + "=" + escape(value) + ((expiredays==null) ? "" : ";expires=" + exdate.toGMTString());
+}
+function checkCookie(){
+  userStyle=getCookie('userStyle');
+  if (userStyle != null && userStyle != "") {
+    changeStyle(userStyle); 
+  } else {
+    userStyle = "dialog-style6";
+    if (userStyle!=null && userStyle!="")
+    {
+      setCookie('userStyle',userStyle,365);
+    }
+  }
+}
+
+// 更换class
+function hasClass(obj, cls) {  
+  return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));  
+}  
+function addClass(obj, cls) {  
+  if (!this.hasClass(obj, cls)) obj.className += " " + cls;  
+}  
+function removeClass(obj, cls) {  
+  if (hasClass(obj, cls)) {  
+      var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');  
+      obj.className = obj.className.replace(reg, ' ');  
+  }  
+}
+function changeStyle(cls){
+  var before = inputSend.className;
+  removeClass(styleBtn, before);
+  addClass(styleBtn, cls);
+  removeClass(inputSend, before);
+  addClass(inputSend, cls); 
+  removeClass(emojiBtn, before);
+  addClass(emojiBtn, cls); 
+  removeClass(sendBtn, before);
+  addClass(sendBtn, cls);
+}
+
+// 获取高度
+function getHeight(){
+  var height_screen = screen.height;
+  var height = height_screen - 90;
+  document.getElementById("dialog-list").style.height = height+"px";
+}
+
+// 生成uuid
+function uuid() {
+  var s = [];
+  var hexDigits = "0123456789abcdef";
+  for (var i = 0; i < 36; i++) {
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+  }
+  s[14] = "4";
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
+  s[8] = s[13] = s[18] = s[23] = "-";
+  var uuid = s.join("");
+  return uuid;
 }

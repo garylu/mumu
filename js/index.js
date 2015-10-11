@@ -25,7 +25,12 @@ $(function(){
 
 
 
-
+	$("#keyboard-face span").click(function(){
+		var text = $(this).text();
+		var chatInput = $("#chat-box-input").val();
+		console.log(chatInput);
+		$("#chat-box-input").val(chatInput+text);
+	})
 
 
 

@@ -50,8 +50,8 @@ bindEvent(document.body, 'keydown', function(e) {
 });
 
 styleBtn.onclick = function(){
-  changeStyle('dialog-style1');
-  setCookie('userStyle','dialog-style1',365);
+  changeStyle('color1');
+  setCookie('userStyle','color1',365);
 };
 
 function main() {
@@ -281,7 +281,7 @@ function getLog(callback) {
 function showLog(msg, data, isBefore) {
   if (data) {
     // console.log(msg, data);
-    msg = msg + '<li class="dialog-style6 mine-reply"><p>' + encodeHTML(JSON.stringify(data)) + '</p></li>';
+    msg = msg + '<li class="color6 mine-reply"><p>' + encodeHTML(JSON.stringify(data)) + '</p></li>';
   }
   var p = document.createElement('p');
   p.innerHTML = msg;
@@ -346,7 +346,7 @@ function checkCookie(){
   if (userStyle != null && userStyle != "") {
     changeStyle(userStyle); 
   } else {
-    userStyle = "dialog-style6";
+    userStyle = "color6";
     if (userStyle!=null && userStyle!="")
     {
       setCookie('userStyle',userStyle,365);
@@ -384,6 +384,7 @@ function getHeight(){
   var height_screen = screen.height;
   var height = height_screen - 90;
   document.getElementById("dialog-list").style.height = height+"px";
+  document.getElementById("room-list").style.height = height+"px";
 }
 
 // 生成uuid

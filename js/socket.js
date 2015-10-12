@@ -281,11 +281,16 @@ function getLog(callback) {
 function showLog(msg, data, isBefore) {
   if (data) {
     // console.log(msg, data);
-    msg = msg + '<li class="color6 mine-reply"><p>' + encodeHTML(JSON.stringify(data)) + '</p></li>';
+    msg = msg + encodeHTML(JSON.stringify(data));
   }
   var p = document.createElement('p');
   p.innerHTML = msg;
-
+	
+	//把对话内容的li改成p后新加的代码,感觉colorStyle和posStyle需要用参数传进来所以用了变量。 ————wykay1012 
+	var colorStyle = "color6";
+	var posStyle = "mine-reply";
+	p.className += colorStyle + " " + posStyle;
+	
   if (isBefore) {
     printWall.insertBefore(p, printWall.childNodes[0]);
   } else {

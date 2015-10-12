@@ -2,7 +2,7 @@
 var appId = '2NoV7CLMeVkPpcPwjqnjilyV';
 
 // 请换成你自己的一个房间的 conversation id（这是服务器端生成的）
-var roomId = '560a7da460b2c218f8927033';
+var roomId = '5617515660b27db42c54e4a3';
 
 // 每个客户端自定义的 id
 var clientId = 'default';
@@ -35,19 +35,20 @@ function window_onload(){
   checkCookie();
   main();
   getHeight();
+  console.log("有何建议请发邮件至lgy0305@163.com 谢谢＝。＝");
 }
 
 // 回车键亦可触发
-bindEvent(sendBtn, 'click', sendMsg);
-bindEvent(document.body, 'keydown', function(e) {
-  if (e.keyCode === 13) {
-    if (firstFlag) {
-      main();
-    } else {
-      sendMsg();
-    }
-  }
-});
+// bindEvent(sendBtn, 'click', sendMsg);
+// bindEvent(document.body, 'keydown', function(e) {
+//   if (e.keyCode === 13) {
+//     if (firstFlag) {
+//       main();
+//     } else {
+//       sendMsg();
+//     }
+//   }
+// });
 
 styleBtn.onclick = function(){
   changeStyle('dialog-style1');
@@ -179,11 +180,12 @@ function sendMsg() {
   }
   var cls = inputSend.className;
   var text = inputSend.value;
-  var val = text + cls;
+  var val = text + "*(%" + cls;
 
   // 不让发送空字符
-  if (!String(val).replace(/^\s+/, '').replace(/\s+$/, '')) {
+  if (!String(text).replace(/^\s+/, '').replace(/\s+$/, '')) {
     alert('空的发不出去＝。＝');
+    return;
   }
 
   // 向这个房间发送消息，这段代码是兼容多终端格式的，包括 iOS、Android、Window Phone
@@ -197,7 +199,8 @@ function sendMsg() {
     inputSend.value = '';
     // showLog('（' + formatTime(data.t) + '）  自己： ', val);
     showLog('', val);
-    printWall.scrollTop = printWall.scrollHeight;
+    console.log(printWall.scrollTop, printWall.scrollHeight);
+    // printWall.scrollTop = printWall.scrollHeight;
   });
 
   // 发送多媒体消息，如果想测试图片发送，可以打开注释
@@ -280,8 +283,11 @@ function getLog(callback) {
 // demo 中输出代码
 function showLog(msg, data, isBefore) {
   if (data) {
-    // console.log(msg, data);
-    msg = msg + '<li class="dialog-style6 mine-reply"><p>' + encodeHTML(JSON.stringify(data)) + '</p></li>';
+    // console.log(data);
+    var datas= new Array();
+    datas=data.split("*(%");
+    // msg = msg + '<li class="' + datas[1] + ' mine-reply"><p>' + encodeHTML(JSON.stringify(datas[0])) + '</p></li>';
+    msg = msg + '<li class="' + datas[1] + ' mine-reply"><p>' + encodeHTML(datas[0]) + '</p></li>';
   }
   var p = document.createElement('p');
   p.innerHTML = msg;
@@ -398,4 +404,8 @@ function uuid() {
   s[8] = s[13] = s[18] = s[23] = "-";
   var uuid = s.join("");
   return uuid;
+}
+
+function diaoyong(){
+  alert("调用成功");
 }

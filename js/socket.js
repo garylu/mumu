@@ -2,7 +2,7 @@
 var appId = '2NoV7CLMeVkPpcPwjqnjilyV';
 
 // 请换成你自己的一个房间的 conversation id（这是服务器端生成的）
-var roomId = '560a7da460b2c218f8927033';
+var roomId = '5617515660b27db42c54e4a3';
 
 // 每个客户端自定义的 id
 var clientId = 'default';
@@ -35,19 +35,20 @@ function window_onload(){
   checkCookie();
   main();
   getHeight();
+  console.log("有何建议请发邮件至lgy0305@163.com 谢谢＝。＝");
 }
 
 // 回车键亦可触发
-bindEvent(sendBtn, 'click', sendMsg);
-bindEvent(document.body, 'keydown', function(e) {
-  if (e.keyCode === 13) {
-    if (firstFlag) {
-      main();
-    } else {
-      sendMsg();
-    }
-  }
-});
+// bindEvent(sendBtn, 'click', sendMsg);
+// bindEvent(document.body, 'keydown', function(e) {
+//   if (e.keyCode === 13) {
+//     if (firstFlag) {
+//       main();
+//     } else {
+//       sendMsg();
+//     }
+//   }
+// });
 
 styleBtn.onclick = function(){
   changeStyle('color1');
@@ -179,11 +180,12 @@ function sendMsg() {
   }
   var cls = inputSend.className;
   var text = inputSend.value;
-  var val = text + cls;
+  var val = text + "*(%" + cls;
 
   // 不让发送空字符
-  if (!String(val).replace(/^\s+/, '').replace(/\s+$/, '')) {
+  if (!String(text).replace(/^\s+/, '').replace(/\s+$/, '')) {
     alert('空的发不出去＝。＝');
+    return;
   }
 
   // 向这个房间发送消息，这段代码是兼容多终端格式的，包括 iOS、Android、Window Phone
@@ -197,6 +199,7 @@ function sendMsg() {
     inputSend.value = '';
     // showLog('（' + formatTime(data.t) + '）  自己： ', val);
     showLog('', val);
+    console.log(printWall.scrollTop, printWall.scrollHeight);
     printWall.scrollTop = printWall.scrollHeight;
   });
 
@@ -279,18 +282,21 @@ function getLog(callback) {
 
 // demo 中输出代码
 function showLog(msg, data, isBefore) {
+  var datas= new Array();
+  var colorStyle;
+  var posStyle = "mine-reply";
   if (data) {
-    // console.log(msg, data);
-    msg = msg + encodeHTML(JSON.stringify(data));
+    // console.log(data);
+    datas=data.split("*(%");
+    // msg = msg + '<li class="' + datas[1] + ' mine-reply"><p>' + encodeHTML(JSON.stringify(datas[0])) + '</p></li>';
+    msg = msg + encodeHTML(datas[0]);
+    colorStyle = datas[1];
   }
+
   var p = document.createElement('p');
   p.innerHTML = msg;
-	
-	//把对话内容的li改成p后新加的代码,感觉colorStyle和posStyle需要用参数传进来所以用了变量。 ————wykay1012 
-	var colorStyle = "color6";
-	var posStyle = "mine-reply";
-	p.className += colorStyle + " " + posStyle;
-	
+  p.className += colorStyle + " " + posStyle;
+
   if (isBefore) {
     printWall.insertBefore(p, printWall.childNodes[0]);
   } else {
@@ -389,7 +395,7 @@ function getHeight(){
   var height_screen = screen.height;
   var height = height_screen - 90;
   document.getElementById("dialog-list").style.height = height+"px";
-  document.getElementById("room-list").style.height = height+"px";
+  // document.getElementById("room-list").style.height = height+"px"; zheng???
 }
 
 // 生成uuid
@@ -404,4 +410,8 @@ function uuid() {
   s[8] = s[13] = s[18] = s[23] = "-";
   var uuid = s.join("");
   return uuid;
+}
+
+function diaoyong(){
+  alert("调用成功");
 }

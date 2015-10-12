@@ -1,7 +1,4 @@
 $(function(){
-
- 
-   // 样式选择、颜文字选择
 	$("#chat-box-input").click(function(){
 		if ($('#keyboard-face').is(':visible')) {
 			$('#keyboard-face').hide();
@@ -30,12 +27,25 @@ $(function(){
 		var chatInput = $("#chat-box-input").val();
 		console.log(chatInput);
 		$("#chat-box-input").val(chatInput+text);
-	})
+	});
 
+	$("#send-btn").click(function(){
+  		if (firstFlag) {
+	      	main();
+	    } else {
+	      	sendMsg();
+	      	$.scrollTo('#dialog-list', printWall.scrollHeight);
+	    }
+	});
+});
 
+$(document).keydown(function (event) {
+    if (event.keyCode == 13) {
+        if (firstFlag) {
+	      	main();
+	    } else {
+	      	sendMsg();
 
-
-
-
-
-})
+	    }
+    };
+});
